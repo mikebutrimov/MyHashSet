@@ -11,11 +11,9 @@ public class Main {
         }
 
 
-
-
-
         Set<String> stringSet = new MyDoubleHashingSet(strings);
-        System.out.println(stringSet.toString());
+
+
 
 
     }

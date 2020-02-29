@@ -7,7 +7,7 @@ import java.util.Set;
 public class MyDoubleHashingSet implements Set {
     private boolean returnBooleanValue = false;
 
-    private int arraySize = 3;
+    private int arraySize = 17;
     private int elementCounter = 0;
     private Object hashTable[];
 
@@ -73,7 +73,7 @@ public class MyDoubleHashingSet implements Set {
             returnBooleanValue = true;
         } else {
             hashTable[collisionChecker(o)] = o;
-            if (returnBooleanValue) {
+            if (returnBooleanValue == false) {
                 elementCounter++;
             }
         }
