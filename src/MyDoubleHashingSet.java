@@ -16,7 +16,7 @@ public class MyDoubleHashingSet implements Set {
     }
 
     public MyDoubleHashingSet(int simpleNumberSize) {
-        if (checkIsItANaturalNumber(simpleNumberSize) == true) {
+        if (checkIsItANaturalNumber(simpleNumberSize)) {
             arraySize = simpleNumberSize;
             hashTable = new Object[arraySize];
         } else {
@@ -30,11 +30,10 @@ public class MyDoubleHashingSet implements Set {
         }
     }
 
-    public MyDoubleHashingSet(Set[] hashTable) {
-
-        //TODO вот тут по идее присрать дженерик
-        //TODO рассчитать для каждого объекта хэшкод в цикле
-        this.hashTable = hashTable;
+    public MyDoubleHashingSet(Set<?> set) {
+        hashTable = new Object[set.size()];
+        elementCounter = set.size();
+        tableConverter(set.toArray());
     }
 
     @Override
@@ -50,7 +49,7 @@ public class MyDoubleHashingSet implements Set {
     @Override
     public boolean contains(Object o) {
         returnBooleanValue = false;
-        collision(o);
+        collisionChecker(o);
         return returnBooleanValue;
     }
 
@@ -67,31 +66,23 @@ public class MyDoubleHashingSet implements Set {
     @Override
     public boolean add(Object o) {
         returnBooleanValue = false;
-
         checkArrayOverflow();
-        //TODO по идее new Object либо дженерик ( прекращай писать мудацкие комменты, где не понятно, что имелось ввиду )
 
         if (doesObjectEquals(o, hashTable[hashCodeIndexCounter(o.hashCode())])) {
-
             hashTable[hashCodeIndexCounter(o.hashCode())] = o;
             returnBooleanValue = true;
-
         } else {
-
-
-            hashTable[collision(o)] = o;
-            if (returnBooleanValue == false) {
+            hashTable[collisionChecker(o)] = o;
+            if (returnBooleanValue) {
                 elementCounter++;
             }
-
-
         }
 
 
         System.out.println(Arrays.asList(hashTable));
-        System.out.println("Базовый хэшкод объекта: " + o.hashCode());
-        System.out.println("hash elementCounter: " + hashCodeIndexCounter(o.hashCode()));
-        System.out.println("elementCounter: " + elementCounter);
+        System.out.println("Hash from Object: " + o.hashCode());
+        System.out.println("Hash in MyDoubleHashingSet: " + hashCodeIndexCounter(o.hashCode()));
+        System.out.println("Amount of elements: " + elementCounter);
         System.out.println("________________________");
 
         return returnBooleanValue;
@@ -101,8 +92,8 @@ public class MyDoubleHashingSet implements Set {
     @Override
     public boolean remove(Object o) {
         returnBooleanValue = false;
-        hashTable[collision(o)] = null;
-        if (returnBooleanValue = true) {
+        hashTable[collisionChecker(o)] = null;
+        if (returnBooleanValue) {
             elementCounter--;
         }
 
@@ -148,36 +139,40 @@ public class MyDoubleHashingSet implements Set {
     private void checkArrayOverflow() {
         if (arraySize / 2 <= elementCounter) {
             System.out.println("*********");
-            System.out.println("current array sieze: " + arraySize);
-            System.out.println("elementCounter: " + elementCounter);
-
-            //TODO создаем новую коллекцию *2 и рассчитываем хэшкоды для всех элементов
+            System.out.println("Сurrent array sieze: " + arraySize);
+            System.out.println("Amount of elements: " + elementCounter);
 
             Object tmpArray[] = hashTable;
 
-            for (int newArraySize = arraySize * 2; ; newArraySize++) {
-                System.out.println("newArraySize " + newArraySize);
-                if (checkIsItANaturalNumber(newArraySize)) {
-                    System.out.println("Намбер " + newArraySize + " из натурал)))))");
-                    System.out.println("new Array size: " + newArraySize);
-                    arraySize = newArraySize;
-                    hashTable = new Object[arraySize];
-                    for (Object object : tmpArray) {
-                        if (object != null) {
-                            hashTable[collision(object)] = object;
-                        }
-                    }
-
-                    break;
-                }
-
-            }
+            tableConverter(tmpArray);
             System.out.println("*********");
         }
 
     }
 
-    public int hashCodeIndexCounter(int hashCOde) {
+    private void tableConverter(Object tmpArray[]) {
+        for (int newArraySize = arraySize * 2; ; newArraySize++) {
+            System.out.println("New Array Size before natural check: " + newArraySize);
+            if (checkIsItANaturalNumber(newArraySize)) {
+                System.out.println("Намбер " + newArraySize + " из натурал)))))");
+                System.out.println("New natural array size: " + newArraySize);
+                arraySize = newArraySize;
+                hashTable = new Object[arraySize];
+                tableSetter(tmpArray);
+                break;
+            }
+        }
+    }
+
+    private void tableSetter(Object tmpArray[]) {
+        for (Object object : tmpArray) {
+            if (object != null) {
+                hashTable[collisionChecker(object)] = object;
+            }
+        }
+    }
+
+    private int hashCodeIndexCounter(int hashCOde) {
 
 
         return Math.abs(hashCOde % arraySize);
@@ -196,15 +191,15 @@ public class MyDoubleHashingSet implements Set {
 
     }
 
-    private int collision(Object o) {
+    private int collisionChecker(Object o) {
         int collisionHashcode = hashCodeIndexCounter(o.hashCode());
         int count = 0;
 
-        System.out.println("hash: " + collisionHashcode);
+        System.out.println("Hash from collisionCheker: " + collisionHashcode);
         // нахер рекурсию с переполнением стэка
         while (true) {
             if (hashTable[collisionHashcode] == null) {
-                System.out.println("Ячейка пуста: " + collisionHashcode + " -выход из цикла");
+                System.out.println("Empty cell: " + collisionHashcode + " -out from cycle");
                 returnBooleanValue = false;
                 break;
 
@@ -212,13 +207,13 @@ public class MyDoubleHashingSet implements Set {
             } else {
 
                 if (doesObjectEquals(o, hashTable[collisionHashcode])) {
-                    System.out.println("Объекты равны в ячейке " + collisionHashcode);
+                    System.out.println("Objects are equals " + collisionHashcode);
                     returnBooleanValue = true;
                     break;
                 } else {
                     collisionHashcode = (hashCodeIndexCounter(o.hashCode()) +
                             count * (1 + hashCodeIndexCounter(o.hashCode()) % (arraySize / 2))) % arraySize;
-                    System.out.println("Новый хэш: " + collisionHashcode);
+                    System.out.println("New object hash: " + collisionHashcode);
                     count++;
                 }
 
