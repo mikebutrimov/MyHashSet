@@ -33,7 +33,7 @@ public class MyDoubleHashingSet implements Set {
     public MyDoubleHashingSet(Set<?> set) {
         hashTable = new Object[set.size()];
         elementCounter = set.size();
-        tableConverter(set.toArray());
+        tableConverter(set.toArray(), elementCounter * 2 / arraySize);
     }
 
     @Override
@@ -144,14 +144,14 @@ public class MyDoubleHashingSet implements Set {
 
             Object tmpArray[] = hashTable;
 
-            tableConverter(tmpArray);
+            tableConverter(tmpArray, 2);
             System.out.println("*********");
         }
 
     }
 
-    private void tableConverter(Object tmpArray[]) {
-        for (int newArraySize = arraySize * 2; ; newArraySize++) {
+    private void tableConverter(Object tmpArray[], int arrayIncrease) {
+        for (int newArraySize = arraySize * arrayIncrease; ; newArraySize++) {
             System.out.println("New Array Size before natural check: " + newArraySize);
             if (checkIsItANaturalNumber(newArraySize)) {
                 System.out.println("Намбер " + newArraySize + " из натурал)))))");
@@ -214,6 +214,7 @@ public class MyDoubleHashingSet implements Set {
                     collisionHashcode = (hashCodeIndexCounter(o.hashCode()) +
                             count * (1 + hashCodeIndexCounter(o.hashCode()) % (arraySize / 2))) % arraySize;
                     System.out.println("New object hash: " + collisionHashcode);
+
                     count++;
                 }
 
