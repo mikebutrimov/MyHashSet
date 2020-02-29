@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.Set;
 
 public class Main {
@@ -37,23 +38,21 @@ public class Main {
         integers.add(13);
         System.out.println(integers.toString());*/
 
-/*
             //тут переопределены методы hashCOde & equals
         TestObject testObject = new TestObject(12, "qwe");
-        TestObject testObject2 = new TestObject(12, "qwe");*/
+        TestObject testObject2 = new TestObject(12, "qwe");
 
-        Set<String> testObjects = new MyDoubleHashingSet(17);
+        Set<String> testObjects = new MyDoubleHashingSet();
 
         String s = "";
         for (int i = 0; i < 15; i++){
-            System.out.println("Добавялемыый элемент: " + s + " " + Math.abs(s.hashCode()%17));
+            System.out.println("Добавялемыый элемент: " + s );
+            testObjects.add(s);
                  s += "q";
 
+
+
         }
-        testObjects.add("");
-        testObjects.add("qqq");
-        testObjects.add("qqqqqqqq");
-        testObjects.add("qqqqqqqq");
 
 
 
