@@ -34,7 +34,7 @@ public class MyDoubleHashingSetTest {
     public void add() {
         strings.add("qwe");
 
-        assertNotEquals(false, strings.add("qwe"));
+        assertEquals(true, strings.add("qwe"));
     }
 
     @Test

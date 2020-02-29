@@ -75,6 +75,7 @@ public class MyDoubleHashingSet implements Set {
             hashTable[collisionChecker(o)] = o;
             if (returnBooleanValue == false) {
                 elementCounter++;
+                returnBooleanValue = true;
             }
         }
 
