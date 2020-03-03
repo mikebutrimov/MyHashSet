@@ -28,17 +28,4 @@ public class TestObject {
 
 
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TestObject that = (TestObject) o;
-        return anInt == that.anInt &&
-                Objects.equals(string, that.string);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(anInt, string);
-    }
 }

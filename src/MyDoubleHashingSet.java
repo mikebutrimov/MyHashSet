@@ -110,6 +110,7 @@ public class MyDoubleHashingSet implements Set {
     @Override
     public void clear() {
         hashTable = new Object[arraySize];
+        elementCounter = 0;
     }
 
     @Override
@@ -228,7 +229,16 @@ public class MyDoubleHashingSet implements Set {
 
     @Override
     public String toString() {
-        return Arrays.toString(hashTable);
+        Object returnArray[] = new Object[elementCounter];
+
+        int count = 0;
+        for(Object obj : hashTable){
+            if (obj != null){
+                returnArray[count] = obj;
+                count++;
+            }
+        }
+        return Arrays.toString(returnArray);
     }
 }
 
