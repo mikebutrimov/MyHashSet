@@ -5,22 +5,27 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class MyDoubleHashingSet implements Set {
-     private int arraySize = 17;
+    private int arraySize = 17; // назови это как константу так, чтобы был понятен ее смысл, например DEFAULT_ARRAY_SIZE
+     
     private int elementCounter = 0;
-    private Object hashTable[];
+    private Object hashTable[];  // если это array и видимо он выполняет функции хранения элементов, то почему он называется
+                                 // hashTable? это скорее storage[] 
 
     MyDoubleHashingSet() {
         hashTable = new Object[arraySize];
     }
 
-    public MyDoubleHashingSet(int simpleNumberSize) {
-        if (checkIsItANaturalNumber(simpleNumberSize)) {
+    public MyDoubleHashingSet(int simpleNumberSize) { // название аргумента странное. почему не просто size ?
+        if (checkIsItANaturalNumber(simpleNumberSize)) { //в чем смысл этой функции? int в жаве знаковый целый всегда, 
+                                                         //достаточно проверить что он больше 0. Более того, можно даже не проверять
+                                                         //а просто попробовать создать а если что бросить эксепшон
             arraySize = simpleNumberSize;
             hashTable = new Object[arraySize];
         } else {
 
             try {
-                throw new Exception("Number must be natural");
+                throw new Exception("Number must be natural");  //бросать исключение чтобы тут же его поймать и завершиться с ошибкой?
+                                                                //можно сразу завершиться с ошибкой
             } catch (Exception e) {
                 e.printStackTrace();
                 System.exit(-1);
@@ -30,8 +35,19 @@ public class MyDoubleHashingSet implements Set {
 
     public MyDoubleHashingSet(Set<?> set) {
         hashTable = new Object[set.size()];
-        elementCounter = set.size();
-        tableConverter(set.toArray(), elementCounter * 2 / arraySize);
+        elementCounter = set.size();  // название currentElements или даже numberOfCurrentElements или даже numberOfElementsInStorage
+                                      // сделало бы назначение этой переменной более понятным
+        tableConverter(set.toArray(), elementCounter * 2 / arraySize); //по названию совершенно непонятно что делает эта функция
+         // она принимает два аргумента и производит видимо какой-то сайдэффект, смысл которого непонятент из названия.
+         // про содержимое функции вообще умолчим, но я подразумеваю что в ней  происодит несколько вещей.
+         // 1. она должна увеличить размер хранилища
+         // 2. она должна переложить в него все элементы из сета, переданного в аргументе. Мне кажется это яркое нарушение
+         // принципа "одна функция, одно действие"
+
+         // можно было бы решить эту проблему следующим образом:
+         // достаточно иметь функцию изменения размера при определенном коэффициенте заполнения и иметь функцию вставки элемента
+         // в сет. И иметь функцию проверки нужно ли перебалансировать внутреннее хранилище. Простая комбинация этих трех функций
+         // легко решает задачу создания сета из другого сета
     }
 
     @Override
@@ -49,7 +65,10 @@ public class MyDoubleHashingSet implements Set {
     public boolean contains(Object o) {
 
 
-        if (doesObjectEquals(o, hashTable[collisionChecker(o)])) return true;
+        if (doesObjectEquals(o, hashTable[collisionChecker(o)])) return true; //тут можно для читаемости объявить поясняющую переменную
+         //например Object elementByHashedIndex = hashTable[collisionChecker(o)]
+         //сама функция collisionChecker по  названию должна возаращать boolean о том есть коллизия или нет, но она явно возвращает 
+         //индекс элемента. значит функция должна называться иначе, например getObjectIndex
 
         return false;
     }
