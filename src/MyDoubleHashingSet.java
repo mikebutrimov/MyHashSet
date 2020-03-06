@@ -5,9 +5,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class MyDoubleHashingSet implements Set {
-    private boolean returnBooleanValue = false;
-
-    private int arraySize = 17;
+     private int arraySize = 17;
     private int elementCounter = 0;
     private Object hashTable[];
 
@@ -46,11 +44,14 @@ public class MyDoubleHashingSet implements Set {
         return false;
     }
 
+    //TODO
     @Override
     public boolean contains(Object o) {
-        returnBooleanValue = false;
-        collisionChecker(o);
-        return returnBooleanValue;
+
+
+        if (doesObjectEquals(o, hashTable[collisionChecker(o)])) return true;
+
+        return false;
     }
 
     @Override
@@ -63,43 +64,50 @@ public class MyDoubleHashingSet implements Set {
         return new Object[0];
     }
 
+
+    //TODO
     @Override
     public boolean add(Object o) {
-        returnBooleanValue = false;
+
         checkArrayOverflow();
 
-        if (doesObjectEquals(o, hashTable[hashCodeIndexCounter(o.hashCode())])) {
-            hashTable[hashCodeIndexCounter(o.hashCode())] = o;
-            returnBooleanValue = true;
-        } else {
-            hashTable[collisionChecker(o)] = o;
-            if (returnBooleanValue == false) {
-                elementCounter++;
-                returnBooleanValue = true;
-            }
+        int hash = collisionChecker(o);
+
+        if (!doesObjectEquals(o, hashTable[hash])){
+            hashTable[hash] = o;
+            elementCounter++;
+
+            System.out.println(Arrays.asList(hashTable));
+            System.out.println("Hash from Object: " + o.hashCode());
+            System.out.println("Hash in MyDoubleHashingSet: " + hashCodeIndexCounter(o.hashCode()));
+            System.out.println("Amount of elements: " + elementCounter);
+            System.out.println("________________________");
+
+            return true;
         }
 
 
-        System.out.println(Arrays.asList(hashTable));
-        System.out.println("Hash from Object: " + o.hashCode());
-        System.out.println("Hash in MyDoubleHashingSet: " + hashCodeIndexCounter(o.hashCode()));
-        System.out.println("Amount of elements: " + elementCounter);
-        System.out.println("________________________");
+        System.out.println("Object exist, return false");
 
-        return returnBooleanValue;
+        return false;
     }
 
 
     @Override
     public boolean remove(Object o) {
-        returnBooleanValue = false;
-        hashTable[collisionChecker(o)] = null;
-        if (returnBooleanValue) {
+        int hash = collisionChecker(o);
+
+
+        if (hashTable[hash] !=null && doesObjectEquals(o, hashTable[hash])){
+            hashTable[hash] = null;
             elementCounter--;
+            System.out.println("Removed '" + o + "' element with hash: " + hash);
+            System.out.println(Arrays.asList(hashTable));
+            return true;
         }
 
 
-        return returnBooleanValue;
+        return false;
     }
 
     @Override
@@ -193,25 +201,24 @@ public class MyDoubleHashingSet implements Set {
 
     }
 
+
     private int collisionChecker(Object o) {
         int collisionHashcode = hashCodeIndexCounter(o.hashCode());
         int count = 0;
 
         System.out.println("Hash from collisionCheker: " + collisionHashcode);
-        // нахер рекурсию с переполнением стэка
+
         while (true) {
             if (hashTable[collisionHashcode] == null) {
                 System.out.println("Empty cell: " + collisionHashcode + " -out from cycle");
-                returnBooleanValue = false;
-                break;
+                return collisionHashcode;
 
 
             } else {
 
                 if (doesObjectEquals(o, hashTable[collisionHashcode])) {
                     System.out.println("Objects are equals " + collisionHashcode);
-                    returnBooleanValue = true;
-                    break;
+                    return collisionHashcode;
                 } else {
                     collisionHashcode = (hashCodeIndexCounter(o.hashCode()) +
                             count * (1 + hashCodeIndexCounter(o.hashCode()) % (arraySize / 2))) % arraySize;
@@ -224,7 +231,6 @@ public class MyDoubleHashingSet implements Set {
 
         }
 
-        return collisionHashcode;
     }
 
     @Override
@@ -232,8 +238,8 @@ public class MyDoubleHashingSet implements Set {
         Object returnArray[] = new Object[elementCounter];
 
         int count = 0;
-        for(Object obj : hashTable){
-            if (obj != null){
+        for (Object obj : hashTable) {
+            if (obj != null) {
                 returnArray[count] = obj;
                 count++;
             }

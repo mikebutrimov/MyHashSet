@@ -1,10 +1,9 @@
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runners.Parameterized;
 
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -45,8 +44,6 @@ public class MyDoubleHashingSetTest {
         assertEquals(expected.contains(eqAHashcodeMax), actual.contains(eqAHashcodeMax));
 
 
-
-
     }
 
     @Test
@@ -54,7 +51,7 @@ public class MyDoubleHashingSetTest {
         testIntegers();
         testObject();
 
-        assertEquals(expected.size(),actual.size());
+        assertEquals(expected.size(), actual.size());
 
 
     }
@@ -68,8 +65,8 @@ public class MyDoubleHashingSetTest {
         expected.remove(testString);
         actual.remove(testString);
 
-        assertEquals(expected.size(),actual.size());
-        assertEquals(expected.contains(testString),actual.contains(testString));
+        assertEquals(expected.size(), actual.size());
+        assertEquals(expected.contains(testString), actual.contains(testString));
     }
 
     @Test
@@ -77,17 +74,18 @@ public class MyDoubleHashingSetTest {
         add();
         expected.clear();
         actual.clear();
-        assertEquals(expected.size(),actual.size());
+        assertEquals(expected.size(), actual.size());
 
 
     }
+
     @Test
-    public void testConstructor(){
+    public void testConstructor() {
         add();
         actual.clear();
         actual = new MyDoubleHashingSet(expected);
 
-        assertEquals(expected.size(),actual.size());
+        assertEquals(expected.size(), actual.size());
     }
 
 
